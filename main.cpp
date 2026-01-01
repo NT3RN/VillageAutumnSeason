@@ -4,7 +4,12 @@
 
 // Variables for animation
 float carPosition = -12.0f;
-float wheelAngle = 0.0f;    // Tracks the wheel rotation
+float wheelAngle = 0.0f;
+float carSpeed = 0.05f; // Initial speed
+
+// Speed Limits
+const float MAX_SPEED = 0.2f;
+const float MIN_SPEED = -0.1f;
 
 void circle(float radius, float xc, float yc, int r, int g, int b) {
     glBegin(GL_POLYGON);
@@ -236,7 +241,6 @@ void bench(float x, float y) {
 }
 
 void car() {
-    // 1. Car Body
     glColor3ub(220, 20, 60);
     glBegin(GL_POLYGON);
         glVertex2f(-0.6, -8.3);
@@ -272,58 +276,69 @@ void car() {
 
     // --- REAR WHEEL (Rotating) ---
     glPushMatrix();
-    // 1. Move to wheel center
-    glTranslatef(0.5, -8.4, 0);
-    // 2. Rotate
+    glTranslatef(0.5, -8.4, 0); // Pivot
     glRotatef(wheelAngle, 0, 0, 1);
-    // 3. Move back to origin
-    glTranslatef(-0.5, 8.4, 0);
+    glTranslatef(-0.5, 8.4, 0); // Back
 
-    // Draw Wheel at original coordinates
-    circle(0.36, 0.5, -8.4, 0, 0, 0);       // Tire
-    circle(0.20, 0.5, -8.4, 220, 220, 220); // Hubcap
-    // Spokes
+    //black tire
+    circle(0.36, 0.5, -8.4, 0, 0, 0);
+    //white shade
+    circle(0.20, 0.5, -8.4, 220, 220, 220);
+    //spoke
     glColor3ub(0, 0, 0);
     glLineWidth(2.0);
     glBegin(GL_LINES);
-        glVertex2f(0.5, -8.2); glVertex2f(0.5, -8.6); // Vertical
-        glVertex2f(0.3, -8.4); glVertex2f(0.7, -8.4); // Horizontal
+        glVertex2f(0.5, -8.2); glVertex2f(0.5, -8.6);
+        glVertex2f(0.3, -8.4); glVertex2f(0.7, -8.4);
     glEnd();
     glPopMatrix();
 
-
     // --- FRONT WHEEL (Rotating) ---
     glPushMatrix();
-    // 1. Move to wheel center
-    glTranslatef(2.2, -8.4, 0);
-    // 2. Rotate
+    glTranslatef(2.2, -8.4, 0); // Pivot
     glRotatef(wheelAngle, 0, 0, 1);
-    // 3. Move back to origin
-    glTranslatef(-2.2, 8.4, 0);
+    glTranslatef(-2.2, 8.4, 0); // Back
 
-    // Draw Wheel
-    circle(0.36, 2.2, -8.4, 0, 0, 0);       // Tire
+    circle(0.36, 2.2, -8.4, 0, 0, 0); // Tire
     circle(0.20, 2.2, -8.4, 220, 220, 220); // Hubcap
-    // Spokes
+
     glColor3ub(0, 0, 0);
     glLineWidth(2.0);
     glBegin(GL_LINES);
-        glVertex2f(2.2, -8.2); glVertex2f(2.2, -8.6); // Vertical
-        glVertex2f(2.0, -8.4); glVertex2f(2.4, -8.4); // Horizontal
+        glVertex2f(2.2, -8.2); glVertex2f(2.2, -8.6);
+        glVertex2f(2.0, -8.4); glVertex2f(2.4, -8.4);
     glEnd();
     glPopMatrix();
 }
 
+// Function to handle arrow keys with SPEED LIMITS
+void handleSpecialKey(int key, int x, int y) {
+    if (key == GLUT_KEY_UP) {
+        if (carSpeed < MAX_SPEED) { // Max speed check
+            carSpeed += 0.01f;
+        }
+    } else if (key == GLUT_KEY_DOWN) {
+        if (carSpeed > MIN_SPEED) { // Min speed check
+            carSpeed -= 0.01f;
+        }
+    }
+}
+
 // Update function for animation
 void update(int value) {
-    carPosition += 0.05f; // Move car right
+    carPosition += carSpeed; // Use controllable speed
 
-    // Rotate wheels (negative for clockwise)
-    wheelAngle -= 5.0f;
+    // Spin wheels proportional to speed (speed * 100 for visible rotation)
+    // Negative because car moves right (positive X), wheels roll clockwise (negative angle)
+    wheelAngle -= (carSpeed * 100.0f);
 
-    if(carPosition > 15.0) { // Loop car
+    // Loop the car
+    if(carPosition > 15.0) {
         carPosition = -15.0;
+    } else if(carPosition < -15.0) {
+        carPosition = 15.0;
     }
+
     glutPostRedisplay();
     glutTimerFunc(20, update, 0); // 50 FPS
 }
@@ -382,6 +397,9 @@ int main(int argc, char** argv) {
     glutCreateWindow("Autumn Village");
     gluOrtho2D(-10,10,-10,10);
     glutDisplayFunc(display);
+
+    glutSpecialFunc(handleSpecialKey); // Register special keys (Arrows)
+
     glutTimerFunc(20, update, 0); // Start animation
     glutMainLoop();
     return 0;
