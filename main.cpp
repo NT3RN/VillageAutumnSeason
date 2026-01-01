@@ -2,6 +2,10 @@
 #include <GL/glut.h>
 #include <math.h>
 
+// Variables for animation
+float carPosition = -12.0f;
+float wheelAngle = 0.0f;    // Tracks the wheel rotation
+
 void circle(float radius, float xc, float yc, int r, int g, int b) {
     glBegin(GL_POLYGON);
     for(int i=0;i<200;i++) {
@@ -232,9 +236,10 @@ void bench(float x, float y) {
 }
 
 void car() {
+    // 1. Car Body
     glColor3ub(220, 20, 60);
     glBegin(GL_POLYGON);
-        glVertex2f(-0.6, -8.3); // Shifted down 0.3
+        glVertex2f(-0.6, -8.3);
         glVertex2f( 3.0, -8.3);
         glVertex2f( 3.0, -8.0);
         glVertex2f( 2.8, -7.8);
@@ -246,49 +251,81 @@ void car() {
     glEnd();
     glColor3ub(50, 50, 50);
     glBegin(GL_POLYGON);
-        glVertex2f(0.6, -7.05); // Shifted down 0.3
+        glVertex2f(0.6, -7.05);
         glVertex2f(1.35, -7.05);
         glVertex2f(1.35, -7.5);
         glVertex2f(0.0, -7.5);
     glEnd();
     glBegin(GL_POLYGON);
-        glVertex2f(1.45, -7.05); // Shifted down 0.3
+        glVertex2f(1.45, -7.05);
         glVertex2f(1.8, -7.3);
         glVertex2f(2.1, -7.5);
         glVertex2f(1.45, -7.5);
     glEnd();
     glColor3ub(220, 20, 60);
-    rectangle(-0.5, -7.8, -0.4, -7.5); // Shifted down 0.3
+    rectangle(-0.5, -7.8, -0.4, -7.5);
     rectangle(-0.6, -7.5, -0.2, -7.4);
 
     //headlight
     glColor3ub(255, 255, 200);
-    circle(0.15, 2.85, -8.0, 255, 255, 200); // Shifted down 0.3
+    circle(0.15, 2.85, -8.0, 255, 255, 200);
 
-    //black tire
-    circle(0.36, 0.4, -8.4, 0, 0, 0); // Shifted down 0.3 -> Y = -8.4
-    circle(0.36, 2.2, -8.4, 0, 0, 0);
+    // --- REAR WHEEL (Rotating) ---
+    glPushMatrix();
+    // 1. Move to wheel center
+    glTranslatef(0.5, -8.4, 0);
+    // 2. Rotate
+    glRotatef(wheelAngle, 0, 0, 1);
+    // 3. Move back to origin
+    glTranslatef(-0.5, 8.4, 0);
 
-    //white shade
-    circle(0.20, 0.4, -8.4, 220, 220, 220);
-    circle(0.20, 2.2, -8.4, 220, 220, 220);
-
-    //spoke
+    // Draw Wheel at original coordinates
+    circle(0.36, 0.5, -8.4, 0, 0, 0);       // Tire
+    circle(0.20, 0.5, -8.4, 220, 220, 220); // Hubcap
+    // Spokes
     glColor3ub(0, 0, 0);
     glLineWidth(2.0);
     glBegin(GL_LINES);
-        //rear wheel
-        glVertex2f(0.4, -8.2); glVertex2f(0.4, -8.6); // Shifted down 0.3
-        glVertex2f(0.2, -8.4); glVertex2f(0.6, -8.4);
-
-        //front wheel
-        //vertical
-        glVertex2f(2.2, -8.2);
-        glVertex2f(2.2, -8.6);
-        //horizontal
-        glVertex2f(2.0, -8.4);
-        glVertex2f(2.4, -8.4);
+        glVertex2f(0.5, -8.2); glVertex2f(0.5, -8.6); // Vertical
+        glVertex2f(0.3, -8.4); glVertex2f(0.7, -8.4); // Horizontal
     glEnd();
+    glPopMatrix();
+
+
+    // --- FRONT WHEEL (Rotating) ---
+    glPushMatrix();
+    // 1. Move to wheel center
+    glTranslatef(2.2, -8.4, 0);
+    // 2. Rotate
+    glRotatef(wheelAngle, 0, 0, 1);
+    // 3. Move back to origin
+    glTranslatef(-2.2, 8.4, 0);
+
+    // Draw Wheel
+    circle(0.36, 2.2, -8.4, 0, 0, 0);       // Tire
+    circle(0.20, 2.2, -8.4, 220, 220, 220); // Hubcap
+    // Spokes
+    glColor3ub(0, 0, 0);
+    glLineWidth(2.0);
+    glBegin(GL_LINES);
+        glVertex2f(2.2, -8.2); glVertex2f(2.2, -8.6); // Vertical
+        glVertex2f(2.0, -8.4); glVertex2f(2.4, -8.4); // Horizontal
+    glEnd();
+    glPopMatrix();
+}
+
+// Update function for animation
+void update(int value) {
+    carPosition += 0.05f; // Move car right
+
+    // Rotate wheels (negative for clockwise)
+    wheelAngle -= 5.0f;
+
+    if(carPosition > 15.0) { // Loop car
+        carPosition = -15.0;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(20, update, 0); // 50 FPS
 }
 
 void display() {
@@ -301,28 +338,22 @@ void display() {
     sun();
     hills();
 
-
     cloud1(-6, 8);
     cloud2(7, 7);
     cloud1(5, 7.5);
     cloud2(-3, 8.5);
 
-
-
     //scene objects
     school(-1.5, 2.0);
     flowerBush(-1.2, 2.0);
     flowerBush(-1.5, 1.9);
-
     flowerBush(2.0, 2.0);
     flowerBush(2.2,2.0);
-
 
     hut1(-7.0, 2.0);
     tree1(-4.0, 2.5);
     tree1(6.8, 2.0);
     hut1(5.0, 1.0);
-
 
     tree2(-8.0, 1.5);
     hut2(0.0, -2.5);
@@ -335,17 +366,23 @@ void display() {
     bench(-2, -6);
     tree3(7.0, -6.0);
 
+    // Animate Car
+    glPushMatrix();
+    glTranslatef(carPosition, 0.0f, 0.0f);
     car();
+    glPopMatrix();
 
-    glFlush();
+    glutSwapBuffers();
 }
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(800, 800);
     glutCreateWindow("Autumn Village");
     gluOrtho2D(-10,10,-10,10);
     glutDisplayFunc(display);
+    glutTimerFunc(20, update, 0); // Start animation
     glutMainLoop();
     return 0;
 }
