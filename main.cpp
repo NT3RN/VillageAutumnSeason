@@ -14,7 +14,7 @@ struct Bird {
 // Birds container
 std::vector<Bird> birds;
 
-// redcar
+// red car
 float carPosition = -12.0f;
 float wheelAngle = 0.0f;
 float carSpeed = 0.05f;
@@ -96,9 +96,13 @@ void drawBird(float x, float y, float wingY) {
     glTranslatef(x, y, 0);
     glScalef(0.02f, 0.02f, 1.0f);
 
-    // Bird Body (Black/Dark Grey)
-    if(isDay) glColor3ub(0, 0, 0);
-    else glColor3ub(30, 30, 30);
+    // Bird Body
+    if(isDay) {
+        glColor3ub(0, 0, 0);
+    }
+    else {
+        glColor3ub(30, 30, 30);
+    }
 
     glBegin(GL_POLYGON);
         glVertex2f(28.65, 2.99);
@@ -136,8 +140,12 @@ void road(){
     else { glColor3ub(60, 60, 60); }
     rectangle(-10,-10,10,-6);
 
-    if(isDay) { glColor3ub(255,255,255); }
-    else { glColor3ub(180, 180, 180); }
+    if(isDay) {
+            glColor3ub(255,255,255);
+    }
+    else {
+            glColor3ub(180, 180, 180);
+    }
 
     rectangle(-10,-7.6,-7.2,-8);
     rectangle(-6,-7.6,-3.2,-8);
@@ -147,8 +155,12 @@ void road(){
 }
 
 void hills(){
-    if(isDay) { glColor3ub(95, 84, 38); }
-    else { glColor3ub(45, 34, 18); }
+    if(isDay) {
+            glColor3ub(95, 84, 38);
+    }
+    else {
+            glColor3ub(45, 34, 18);
+    }
     triangle(-10,4,-2.4,4,-8,7);
     triangle(-8,4,-4,7.5,0,4);
     triangle(-5,4,-1,6.5,2,4);
@@ -158,20 +170,32 @@ void hills(){
 }
 
 void field(){
-    if(isDay) { glColor3ub(117, 177, 0); }
-    else { glColor3ub(30, 60, 0); }
+    if(isDay) {
+            glColor3ub(117, 177, 0);
+    }
+    else {
+            glColor3ub(30, 60, 0);
+    }
     rectangle(-10,-6,10,4);
 }
 
 void sky(){
-    if(isDay) { glColor3ub(90, 171, 214); }
-    else { glColor3ub(25, 25, 112); }
+    if(isDay) {
+            glColor3ub(90, 171, 214);
+    }
+    else {
+            glColor3ub(25, 25, 112);
+    }
     rectangle(-10,4,10,10);
 }
 
 void miniroad(){
-    if(isDay) { glColor3ub(219, 204, 201); }
-    else { glColor3ub(100, 90, 90); }
+    if(isDay) {
+            glColor3ub(219, 204, 201);
+    }
+    else {
+            glColor3ub(100, 90, 90);
+    }
     customRectangle(-10,-0.4,-10,-1.6,-7,-0.7,-7.2,0.2);
     customRectangle(-7,-.7,-7.2,.2,-4.2,-.2,-4.6,-1.4);
     customRectangle(-4.6,-1.4,-3.8,-1.7,-3.5,1.2,-4,1.7);
@@ -205,8 +229,16 @@ void stars(){
 
 void cloud1(float cx, float cy) {
     int r, g, b;
-    if(isDay) { r=255; g=255; b=255; }
-    else { r=100; g=100; b=120; }
+    if(isDay) {
+            r=255;
+            g=255;
+            b=255;
+            }
+    else {
+            r=100;
+            g=100;
+            b=120;
+    }
     oval(1.5, 0.8, cx, cy, r, g, b);
     oval(1.2, 0.9, cx - 1.0, cy - 0.2, r, g, b);
     oval(1.2, 0.9, cx + 1.0, cy - 0.2, r, g, b);
@@ -230,8 +262,12 @@ void tree1(float x, float y) {
     glTranslatef(x, y + 1.5, 0);
     glRotatef(currentSway, 0, 0, 1);
     glTranslatef(-x, -(y + 1.5), 0);
-    if(isDay) { glColor3ub(124, 139, 34); }
-    else { glColor3ub(60, 70, 20); }
+    if(isDay) {
+        glColor3ub(124, 139, 34);
+    }
+    else {
+        glColor3ub(60, 70, 20);
+        }
     triangle(x - 0.8, y + 1.0, x + 0.8, y + 1.0, x, y + 2.5);
     triangle(x - 0.6, y + 1.8, x + 0.6, y + 1.8, x, y + 3.0);
     glPopMatrix();
@@ -279,8 +315,10 @@ void hut1(float x, float y){
     triangle(x-0.2, y+1.5, x+2.2, y+1.5, x+1.0, y+2.5);
     glColor3ub(101, 67, 33);
     rectangle(x+0.8, y, x+1.2, y+0.8);
-    if(isDay) { glColor3ub(135, 206, 235); }
-    else { glColor3ub(255, 255, 0); }
+    if(isDay) {
+            glColor3ub(135, 206, 235); }
+    else {
+        glColor3ub(255, 255, 0); }
     rectangle(x+0.2, y+0.9, x+0.6, y+1.3);
     rectangle(x+1.4, y+0.9, x+1.8, y+1.3);
 }
@@ -404,36 +442,62 @@ void car() {
         glDisable(GL_BLEND);
     }
     glPushMatrix();
-    glTranslatef(0.5, -8.4, 0); glRotatef(wheelAngle, 0, 0, 1); glTranslatef(-0.5, 8.4, 0);
-    circle(0.36, 0.5, -8.4, 0, 0, 0); circle(0.20, 0.5, -8.4, 220, 220, 220);
-    glColor3ub(0, 0, 0); glLineWidth(2.0);
-    glBegin(GL_LINES); glVertex2f(0.5, -8.2); glVertex2f(0.5, -8.6); glVertex2f(0.3, -8.4); glVertex2f(0.7, -8.4); glEnd();
+    glTranslatef(0.5, -8.4, 0);
+    glRotatef(wheelAngle, 0, 0, 1);
+    glTranslatef(-0.5, 8.4, 0);
+    circle(0.36, 0.5, -8.4, 0, 0, 0);
+    circle(0.20, 0.5, -8.4, 220, 220, 220);
+    glColor3ub(0, 0, 0);
+    glLineWidth(2.0);
+    glBegin(GL_LINES);
+    glVertex2f(0.5, -8.2);
+    glVertex2f(0.5, -8.6);
+    glVertex2f(0.3, -8.4);
+    glVertex2f(0.7, -8.4);
+    glEnd();
     glPopMatrix();
     glPushMatrix();
-    glTranslatef(2.2, -8.4, 0); glRotatef(wheelAngle, 0, 0, 1); glTranslatef(-2.2, 8.4, 0);
-    circle(0.36, 2.2, -8.4, 0, 0, 0); circle(0.20, 2.2, -8.4, 220, 220, 220);
-    glColor3ub(0, 0, 0); glLineWidth(2.0);
-    glBegin(GL_LINES); glVertex2f(2.2, -8.2); glVertex2f(2.2, -8.6); glVertex2f(2.0, -8.4); glVertex2f(2.4, -8.4); glEnd();
+    glTranslatef(2.2, -8.4, 0);
+    glRotatef(wheelAngle, 0, 0, 1);
+    glTranslatef(-2.2, 8.4, 0);
+    circle(0.36, 2.2, -8.4, 0, 0, 0);
+    circle(0.20, 2.2, -8.4, 220, 220, 220);
+    glColor3ub(0, 0, 0);
+    glLineWidth(2.0);
+    glBegin(GL_LINES);
+    glVertex2f(2.2, -8.2);
+    glVertex2f(2.2, -8.6);
+    glVertex2f(2.0, -8.4);
+    glVertex2f(2.4, -8.4);
+    glEnd();
     glPopMatrix();
 }
 
 void carBlue() {
     glColor3ub(30, 30, 220);
     glBegin(GL_POLYGON);
-        glVertex2f(-0.6, -8.3); glVertex2f( 3.0, -8.3);
-        glVertex2f( 3.0, -8.0); glVertex2f( 2.8, -7.8);
-        glVertex2f( 2.2, -7.6); glVertex2f( 1.5, -6.9);
-        glVertex2f( 0.5, -6.9); glVertex2f(-0.3, -7.6);
+        glVertex2f(-0.6, -8.3);
+        glVertex2f( 3.0, -8.3);
+        glVertex2f( 3.0, -8.0);
+        glVertex2f( 2.8, -7.8);
+        glVertex2f( 2.2, -7.6);
+        glVertex2f( 1.5, -6.9);
+        glVertex2f( 0.5, -6.9);
+        glVertex2f(-0.3, -7.6);
         glVertex2f(-0.6, -7.8);
     glEnd();
     glColor3ub(50, 50, 50);
     glBegin(GL_POLYGON);
-        glVertex2f(0.6, -7.05); glVertex2f(1.35, -7.05);
-        glVertex2f(1.35, -7.5); glVertex2f(0.0, -7.5);
+        glVertex2f(0.6, -7.05);
+        glVertex2f(1.35, -7.05);
+        glVertex2f(1.35, -7.5);
+        glVertex2f(0.0, -7.5);
     glEnd();
     glBegin(GL_POLYGON);
-        glVertex2f(1.45, -7.05); glVertex2f(1.8, -7.3);
-        glVertex2f(2.1, -7.5); glVertex2f(1.45, -7.5);
+        glVertex2f(1.45, -7.05);
+        glVertex2f(1.8, -7.3);
+        glVertex2f(2.1, -7.5);
+        glVertex2f(1.45, -7.5);
     glEnd();
     glColor3ub(30, 30, 220);
     rectangle(-0.5, -7.8, -0.4, -7.5);
@@ -445,25 +509,46 @@ void carBlue() {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glColor4ub(255, 255, 200, 100);
         glBegin(GL_TRIANGLES);
-            glVertex2f(2.9, -8.0); glVertex2f(6.0, -7.0); glVertex2f(6.0, -9.0);
+            glVertex2f(2.9, -8.0);
+            glVertex2f(6.0, -7.0);
+            glVertex2f(6.0, -9.0);
         glEnd();
         glDisable(GL_BLEND);
     }
     glPushMatrix();
-    glTranslatef(0.5, -8.4, 0); glRotatef(wheelAngle, 0, 0, 1); glTranslatef(-0.5, 8.4, 0);
-    circle(0.36, 0.5, -8.4, 0, 0, 0); circle(0.20, 0.5, -8.4, 220, 220, 220);
-    glColor3ub(0, 0, 0); glLineWidth(2.0);
-    glBegin(GL_LINES); glVertex2f(0.5, -8.2); glVertex2f(0.5, -8.6); glVertex2f(0.3, -8.4); glVertex2f(0.7, -8.4); glEnd();
+    glTranslatef(0.5, -8.4, 0);
+    glRotatef(wheelAngle, 0, 0, 1);
+    glTranslatef(-0.5, 8.4, 0);
+    circle(0.36, 0.5, -8.4, 0, 0, 0);
+    circle(0.20, 0.5, -8.4, 220, 220, 220);
+    glColor3ub(0, 0, 0);
+    glLineWidth(2.0);
+    glBegin(GL_LINES);
+    glVertex2f(0.5, -8.2);
+    glVertex2f(0.5, -8.6);
+    glVertex2f(0.3, -8.4);
+    glVertex2f(0.7, -8.4);
+    glEnd();
     glPopMatrix();
     glPushMatrix();
-    glTranslatef(2.2, -8.4, 0); glRotatef(wheelAngle, 0, 0, 1); glTranslatef(-2.2, 8.4, 0);
-    circle(0.36, 2.2, -8.4, 0, 0, 0); circle(0.20, 2.2, -8.4, 220, 220, 220);
-    glColor3ub(0, 0, 0); glLineWidth(2.0);
-    glBegin(GL_LINES); glVertex2f(2.2, -8.2); glVertex2f(2.2, -8.6); glVertex2f(2.0, -8.4); glVertex2f(2.4, -8.4); glEnd();
+    glTranslatef(2.2, -8.4, 0);
+    glRotatef(wheelAngle, 0, 0, 1);
+    glTranslatef(-2.2, 8.4, 0);
+    circle(0.36, 2.2, -8.4, 0, 0, 0);
+    circle(0.20, 2.2, -8.4, 220, 220, 220);
+    glColor3ub(0, 0, 0);
+    glLineWidth(2.0);
+    glBegin(GL_LINES);
+    glVertex2f(2.2, -8.2);
+    glVertex2f(2.2, -8.6);
+    glVertex2f(2.0, -8.4);
+    glVertex2f(2.4, -8.4);
+    glEnd();
     glPopMatrix();
+
 }
 
-// --- INTERACTION ---
+//clicks and keyboard
 
 void handleMouse(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
