@@ -599,7 +599,7 @@ void display() {
     bench(-2, -6);
     tree3(7.0, -6.0);
 
-    // Animate Car
+    //animate Car
     glPushMatrix();
     glTranslatef(carPosition, 0.0f, 0.0f);
     car();
