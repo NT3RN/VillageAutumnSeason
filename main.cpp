@@ -5,7 +5,15 @@
 // Variables for animation
 float carPosition = -12.0f;
 float wheelAngle = 0.0f;
-float carSpeed = 0.05f; // Initial speed
+float carSpeed = 0.05f;
+
+// Sun/Moon Animation Variables
+float sunY = -11.0f;
+float cloudPosRight = 0.0f;
+float cloudPosLeft = 0.0f;
+
+// Day/Night State
+bool isDay = true; // true = Day, false = Night
 
 // Speed Limits
 const float MAX_SPEED = 0.2f;
@@ -61,11 +69,25 @@ void triangle(float x1, float y1,float x2, float y2,float x3, float y3){
     glEnd();
 }
 
-//background
+//background (Modified for Night Mode)
 void road(){
-    glColor3ub(128,128,128);
+    if(isDay) {
+        glColor3ub(128,128,128); // Day Gray
+    }
+    else {
+        glColor3ub(60, 60, 60);  // Night Dark Gray
+    }
+
     rectangle(-10,-10,10,-6);
-    glColor3ub(255,255,255);
+
+    // Road lines (Dimmer at night)
+    if(isDay) {
+        glColor3ub(255,255,255);
+    }
+    else {
+        glColor3ub(180, 180, 180);
+    }
+
     rectangle(-10,-7.6,-7.2,-8);
     rectangle(-6,-7.6,-3.2,-8);
     rectangle(-2,-7.6,0.8,-8);
@@ -73,8 +95,15 @@ void road(){
     rectangle(6,-7.6, 8.8, -8 );
 }
 
+// Hills (Modified for Night Mode)
 void hills(){
-    glColor3ub(95, 84, 38);
+    if(isDay) {
+        glColor3ub(95, 84, 38); // Day Brown
+    }
+    else {
+        glColor3ub(45, 34, 18); // Night Dark Brown
+    }
+
     triangle(-10,4,-2.4,4,-8,7);
     triangle(-8,4,-4,7.5,0,4);
     triangle(-5,4,-1,6.5,2,4);
@@ -83,17 +112,36 @@ void hills(){
     triangle(-8,4,-13,7,-14,4);
 }
 
+// Field (Modified for Night Mode)
 void field(){
-    glColor3ub(117, 177, 0);
+    if(isDay) {
+        glColor3ub(117, 177, 0); // Day Green
+    }
+    else {
+        glColor3ub(30, 60, 0);   // Night Dark Green
+    }
     rectangle(-10,-6,10,4);
 }
 
+// Sky (Modified for Night Mode)
 void sky(){
-    glColor3ub(90, 171, 214);
-    rectangle(-10,4,10,10);
+    if(isDay) {
+        glColor3ub(90, 171, 214); // Day Blue
     }
+    else {
+        glColor3ub(25, 25, 112);  // Night Midnight Blue
+    }
+    rectangle(-10,4,10,10);
+}
+
 void miniroad(){
-    glColor3ub(219, 204, 201);
+    if(isDay) {
+        glColor3ub(219, 204, 201);
+    }
+    else {
+        glColor3ub(100, 90, 90); // Darker at night
+    }
+
     customRectangle(-10,-0.4,-10,-1.6,-7,-0.7,-7.2,0.2);
     customRectangle(-7,-.7,-7.2,.2,-4.2,-.2,-4.6,-1.4);
     customRectangle(-4.6,-1.4,-3.8,-1.7,-3.5,1.2,-4,1.7);
@@ -102,29 +150,62 @@ void miniroad(){
     customRectangle(0,0,0,1,8,3,8,2.3);
     customRectangle(8,3,8,2.3,10,1.6,10,3);
 }
+
 void sun(){
     circle(1.5,0,8,255, 170, 51);
     circle(1,0,8,255,150,34);
-    }
+}
+
+// NEW: Moon Function
+void moon(){
+    // White glowing circle
+    circle(1.2, 0, 8, 240, 240, 240);
+    // Light gray craters
+    circle(0.3, -0.4, 8.2, 200, 200, 200);
+    circle(0.2, 0.5, 8.5, 200, 200, 200);
+}
+
+// NEW: Stars Function
+void stars(){
+    glColor3ub(255, 255, 255);
+    glPointSize(2.0);
+    glBegin(GL_POINTS);
+        glVertex2f(-8, 9); glVertex2f(-5, 8); glVertex2f(-2, 9.5);
+        glVertex2f(2, 9); glVertex2f(5, 8.5); glVertex2f(8, 9.2);
+        glVertex2f(-9, 6); glVertex2f(0, 7); glVertex2f(9, 6.5);
+        glVertex2f(-6, 5); glVertex2f(4, 5.5);
+    glEnd();
+}
 
 //two different clouds
-
 void cloud1(float cx, float cy) {
-    // Base layer
-    oval(1.5, 0.8, cx, cy, 255, 255, 255);
-    oval(1.2, 0.9, cx - 1.0, cy - 0.2, 255, 255, 255);
-    oval(1.2, 0.9, cx + 1.0, cy - 0.2, 255, 255, 255);
+    int r, g, b;
+    if(isDay) {
+        r=255; g=255; b=255;
+    }
+    else {
+        r=100; g=100; b=120; // Darker clouds at night
+    }
 
-    // Top puffs
-    circle(0.8, cx - 0.5, cy + 0.5, 255, 255, 255);
-    circle(0.9, cx + 0.5, cy + 0.6, 255, 255, 255);
+    oval(1.5, 0.8, cx, cy, r, g, b);
+    oval(1.2, 0.9, cx - 1.0, cy - 0.2, r, g, b);
+    oval(1.2, 0.9, cx + 1.0, cy - 0.2, r, g, b);
+    circle(0.8, cx - 0.5, cy + 0.5, r, g, b);
+    circle(0.9, cx + 0.5, cy + 0.6, r, g, b);
 }
 
 void cloud2(float cx, float cy) {
+    int r, g, b;
+    if(isDay) {
+        r=240; g=248; b=255;
+    }
+    else {
+        r=90; g=90; b=110; // Darker clouds at night
+    }
 
-    oval(2.5, 0.4, cx, cy, 240, 248, 255);
-    oval(1.8, 0.3, cx - 1, cy + 0.1, 240, 248, 255);
-    oval(1.8, 0.3, cx + 1.2, cy - 0.1, 240, 248, 255);
+    oval(2.5, 0.4, cx, cy, r, g, b);
+    oval(1.8, 0.3, cx - 1, cy + 0.1, r, g, b);
+    oval(1.8, 0.3, cx + 1.2, cy - 0.1, r, g, b);
 }
 
 
@@ -132,7 +213,13 @@ void cloud2(float cx, float cy) {
 void tree1(float x, float y) {
     glColor3ub(80, 50, 20);
     rectangle(x - 0.15, y, x + 0.15, y + 1.5);
-    glColor3ub(124, 139, 34);
+    if(isDay) {
+        glColor3ub(124, 139, 34);
+    }
+    else {
+        glColor3ub(60, 70, 20); // Darker leaves
+    }
+
     triangle(x - 0.8, y + 1.0, x + 0.8, y + 1.0, x, y + 2.5);
     triangle(x - 0.6, y + 1.8, x + 0.6, y + 1.8, x, y + 3.0);
 }
@@ -140,9 +227,27 @@ void tree1(float x, float y) {
 void tree2(float x, float y) {
     glColor3ub(101, 67, 33);
     rectangle(x - 0.25, y, x + 0.25, y + 2.0);
-    circle(1.0, x, y + 2.2, 255, 140, 0);
-    circle(0.8, x - 0.6, y + 1.8, 205, 92, 92);
-    circle(0.8, x + 0.6, y + 1.8, 210, 105, 30);
+
+    if(isDay) {
+        circle(1.0, x, y + 2.2, 255, 140, 0);
+    }
+    else {
+        circle(1.0, x, y + 2.2, 150, 80, 0);
+    }
+
+    if(isDay) {
+        circle(0.8, x - 0.6, y + 1.8, 205, 92, 92);
+    }
+    else {
+        circle(0.8, x - 0.6, y + 1.8, 100, 40, 40);
+    }
+
+    if(isDay) {
+        circle(0.8, x + 0.6, y + 1.8, 210, 105, 30);
+    }
+    else {
+        circle(0.8, x + 0.6, y + 1.8, 100, 50, 15);
+    }
 }
 
 void tree3(float x, float y) {
@@ -151,9 +256,27 @@ void tree3(float x, float y) {
     glColor3ub(90, 60, 30);
     triangle(x - 0.4, y + 1.8, x - 0.4, y + 2.2, x - 1.2, y + 2.8);
     triangle(x + 0.4, y + 2.0, x + 0.4, y + 2.4, x + 1.2, y + 2.9);
-    circle(1.4, x - 0.9, y + 3.0, 184, 134, 11);
-    circle(1.4, x + 0.9, y + 3.0, 160, 82, 45);
-    circle(1.6, x, y + 4.0, 255, 69, 0);
+
+    if(isDay) {
+        circle(1.4, x - 0.9, y + 3.0, 184, 134, 11);
+    }
+    else {
+        circle(1.4, x - 0.9, y + 3.0, 90, 65, 5);
+    }
+
+    if(isDay) {
+        circle(1.4, x + 0.9, y + 3.0, 160, 82, 45);
+    }
+    else {
+        circle(1.4, x + 0.9, y + 3.0, 80, 40, 20);
+    }
+
+    if(isDay) {
+        circle(1.6, x, y + 4.0, 255, 69, 0);
+    }
+    else {
+        circle(1.6, x, y + 4.0, 120, 30, 0);
+    }
 }
 
 // huts
@@ -164,7 +287,14 @@ void hut1(float x, float y){
     triangle(x-0.2, y+1.5, x+2.2, y+1.5, x+1.0, y+2.5);
     glColor3ub(101, 67, 33);
     rectangle(x+0.8, y, x+1.2, y+0.8);
-    glColor3ub(135, 206, 235);
+
+    if(isDay) {
+        glColor3ub(135, 206, 235);
+    }
+    else {
+        glColor3ub(255, 255, 0); // Windows light up at night
+    }
+
     rectangle(x+0.2, y+0.9, x+0.6, y+1.3);
     rectangle(x+1.4, y+0.9, x+1.8, y+1.3);
 }
@@ -176,7 +306,14 @@ void hut2(float x, float y) {
     triangle(x-0.3, y+2.0, x+2.8, y+2.0, x+1.25, y+3.5);
     glColor3ub(101, 67, 33);
     rectangle(x+0.2, y, x+0.8, y+1.2);
-    glColor3ub(255, 255, 0);
+
+    if(isDay) {
+        glColor3ub(255, 255, 0);
+    }
+    else {
+        glColor3ub(255, 255, 100); // Brighter light at night
+    }
+
     rectangle(x+1.5, y+0.8, x+2.0, y+1.5);
 }
 
@@ -187,7 +324,14 @@ void hut3(float x, float y) {
     triangle(x-0.5, y+2.5, x+4.0, y+2.5, x+1.75, y+4.2);
     glColor3ub(139, 69, 19);
     rectangle(x+1.2, y, x+2.2, y+1.5);
-    glColor3ub(173, 216, 230);
+
+    if(isDay) {
+        glColor3ub(173, 216, 230);
+    }
+    else {
+        glColor3ub(255, 255, 0); // Light up
+    }
+
     rectangle(x+0.3, y+1.0, x+0.9, y+1.8);
     rectangle(x+2.5, y+1.0, x+3.1, y+1.8);
 }
@@ -200,7 +344,13 @@ void school(float x, float y) {
     glColor3ub(60, 60, 60);
     rectangle(x-0.1, y+2.0, x+3.9, y+2.15);
     //glass window
-    glColor3ub(135, 206, 250);
+    if(isDay) {
+        glColor3ub(135, 206, 250);
+    }
+    else {
+        glColor3ub(100, 100, 150); // Darker glass at night
+    }
+
     //2nd floor
     rectangle(x+0.2, y+1.2, x+3.6, y+1.7);
     //first floor
@@ -210,7 +360,14 @@ void school(float x, float y) {
     //main gate
     glColor3ub(40, 40, 40); //frame
     rectangle(x+1.6, y, x+2.2, y+1.0);
-    glColor3ub(100, 149, 237);
+
+    if(isDay) {
+        glColor3ub(100, 149, 237);
+    }
+    else {
+        glColor3ub(50, 50, 100);
+    }
+
     rectangle(x+1.65, y, x+2.15, y+0.95);
     glColor3ub(255, 165, 0); // Orange
     rectangle(x+1.5, y+1.0, x+2.3, y+1.1);
@@ -274,6 +431,20 @@ void car() {
     glColor3ub(255, 255, 200);
     circle(0.15, 2.85, -8.0, 255, 255, 200);
 
+    // Headlight Beam (Only visible at night)
+    if (!isDay) {
+        // Semi-transparent yellow beam
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor4ub(255, 255, 200, 100);
+        glBegin(GL_TRIANGLES);
+            glVertex2f(2.9, -8.0); // Light source
+            glVertex2f(6.0, -7.0); // Top beam
+            glVertex2f(6.0, -9.0); // Bottom beam
+        glEnd();
+        glDisable(GL_BLEND);
+    }
+
     // --- REAR WHEEL (Rotating) ---
     glPushMatrix();
     glTranslatef(0.5, -8.4, 0); // Pivot
@@ -311,6 +482,13 @@ void car() {
     glPopMatrix();
 }
 
+// Handle Mouse Click for Day/Night Transition
+void handleMouse(int button, int state, int x, int y) {
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        isDay = !isDay; // Toggle Day/Night
+    }
+}
+
 // Function to handle arrow keys with SPEED LIMITS
 void handleSpecialKey(int key, int x, int y) {
     if (key == GLUT_KEY_UP) {
@@ -326,37 +504,77 @@ void handleSpecialKey(int key, int x, int y) {
 
 // Update function for animation
 void update(int value) {
-    carPosition += carSpeed; // Use controllable speed
-
-    // Spin wheels proportional to speed (speed * 100 for visible rotation)
-    // Negative because car moves right (positive X), wheels roll clockwise (negative angle)
+    // 1. Car Physics
+    carPosition += carSpeed;
     wheelAngle -= (carSpeed * 100.0f);
 
-    // Loop the car
     if(carPosition > 15.0) {
         carPosition = -15.0;
-    } else if(carPosition < -15.0) {
+    }
+    else if(carPosition < -15.0) {
         carPosition = 15.0;
     }
 
+    // 2. Sun Rise Animation (FULL LOOP)
+    sunY += 0.03f; // Sun rising speed
+    if(sunY > 11.0f) {
+        sunY = -11.0f;
+    }
+
+    // 3. Cloud Movement Animation
+    // Move Right ->
+    cloudPosRight += 0.02f;
+    if(cloudPosRight > 20.0f) {
+        cloudPosRight = -20.0f;
+    }
+
+    // Move Left <-
+    cloudPosLeft -= 0.03f;
+    if(cloudPosLeft < -20.0f) {
+        cloudPosLeft = 20.0f;
+    }
+
     glutPostRedisplay();
-    glutTimerFunc(20, update, 0); // 50 FPS
+    glutTimerFunc(20, update, 0);
 }
 
 void display() {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    sky();
+    if(!isDay) {
+        stars(); // Draw stars only at night
+    }
+
+    // --- SUN or MOON (Animated) ---
+    glPushMatrix();
+    glTranslatef(0.0f, sunY, 0.0f); // Move celestial body Up
+    if(isDay) {
+        sun();
+    }
+    else {
+        moon();
+    }
+    glPopMatrix();
+
+    hills();
     field();
     miniroad();
-    sky();
-    sun();
-    hills();
 
+    // --- CLOUDS GROUP 1 (Moving Right ->) ---
+    glPushMatrix();
+    glTranslatef(cloudPosRight, 0.0f, 0.0f);
     cloud1(-6, 8);
-    cloud2(7, 7);
     cloud1(5, 7.5);
+    glPopMatrix();
+
+    // --- CLOUDS GROUP 2 (Moving Left <-) ---
+    glPushMatrix();
+    glTranslatef(cloudPosLeft, 0.0f, 0.0f);
+    cloud2(7, 7);
     cloud2(-3, 8.5);
+    glPopMatrix();
 
     //scene objects
     school(-1.5, 2.0);
@@ -398,9 +616,10 @@ int main(int argc, char** argv) {
     gluOrtho2D(-10,10,-10,10);
     glutDisplayFunc(display);
 
-    glutSpecialFunc(handleSpecialKey); // Register special keys (Arrows)
+    glutSpecialFunc(handleSpecialKey);
+    glutMouseFunc(handleMouse); // Register mouse click
 
-    glutTimerFunc(20, update, 0); // Start animation
+    glutTimerFunc(20, update, 0);
     glutMainLoop();
     return 0;
 }
